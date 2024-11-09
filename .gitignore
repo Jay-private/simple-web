@@ -1,2 +1,8 @@
 xinfra/*.tar
+xinfra/**/.terraform/
+xinfra/**/.terraform.lock.hcl
+xinfra/**/terraform.tfstate
+xinfra/**/terraform.tfstate.backup
 platform
+
+**/DS_store

@@ -1,0 +1,68 @@
+## ec2 s3 deploy12
+name: Deploy to AWS
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1.소스코드 다운로드(simple-web)
+        uses: actions/checkout@v2
+
+      - name: 2.AWS CLI 접속 정보 세팅
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: 3.아티팩트 만들기
+        run: |
+          pwd
+          zip -r deploy.zip ./*
+
+      - name: 4.S3 아티팩트 업로드
+        run: |
+          aws s3 cp deploy.zip s3://${{ secrets.S3_BUCKET }}/deploy.zip
+
+      - name: 5.현재 진행중인 Deploy ID 가져오고 중단
+        run: |
+          # 현재 진행중인 deploy ID 조회
+          DEPLOYMENTS=$(aws deploy list-deployments \
+            --application-name simple-web-content \
+            --deployment-group-name simple-web-deploy-group \
+            --include-only-statuses "InProgress" \
+            --query 'deployments[]' \
+            --output text)
+          
+          if [ ! -z "$DEPLOYMENTS" ]; then
+            for deployment in $DEPLOYMENTS; do
+              echo "Stopping deployment $deployment"
+              # 진행중인 deploy 를 stop
+              aws deploy stop-deployment --deployment-id $deployment
+            done
+            # 잠시 대기하여 취소가 완료되도록 함
+            sleep 10
+          fi
+
+      - name: 6.AWS Deploy 를 통해 배포한다
+        # id 를 지정하면 아래 step 에서 이 step 에서 생성된 변수에 접근 가능
+        id: deploy
+        run: |
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name simple-web-content \
+            --deployment-group-name simple-web-deploy-group \
+            --s3-location bucket=${{ secrets.S3_BUCKET }},key=deploy.zip,bundleType=zip \
+            --output text \
+            --query 'deploymentId')
+          #echo "::set-output name=deployment_id::$DEPLOYMENT_ID"
+          #echo "{name}=deployment_id" >> $GITHUB_OUTPUT
+
+          # $GITHUB_OUTPUT 에다가 DEPLOYMENT_ID 를 저장하면 아래 step 에서 참조 가능
+          echo "deployment_id=${DEPLOYMENT_ID}" >> $GITHUB_OUTPUT
+
+      - name: 7.deloly 완료 대기
+        run: |
+          aws deploy wait deployment-successful --deployment-id ${{ steps.deploy.outputs.deployment_id }}
