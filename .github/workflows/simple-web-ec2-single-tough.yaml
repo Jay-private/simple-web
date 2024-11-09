@@ -12,10 +12,10 @@ jobs:
   deploy-on-aws:
     runs-on: ubuntu-latest
     steps:
-      - name: 소스코드 가져오기
+      - name: 1.소스코드 가져오기
         uses: actions/checkout@v3
 
-      - name: AWS 접속 정보 설정
+      - name: 2.AWS 접속 정보 설정
         uses: aws-actions/configure-aws-credentials@v3
         with:
           # github-action context : secrets
@@ -23,20 +23,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2 # 사용할 AWS 리전2
 
-      - name: SSH 키 설정
+      - name: 3.SSH 키 설정
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.AWS_KEY }} # EC2 인스턴스의 SSH 키
 
-      - name: List files
+      - name: 4.List files
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "ls -la /home/${{ secrets.AWS_USER }}"
 
-      # - name: Copy Files to EC2
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo chown -R ec2-user:ec2-user /usr/share/nginx/html"
-      #     scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/usr/share/nginx/html
-
-      # - name: Restart Web Server
-      #   run: |
-      #     ssh -v -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo systemctl restart nginx || sudo systemctl restart httpd"
+      - name: 5.파일서버로 복사
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo chown -R ${{ secrets.AWS_USER }}:${{ secrets.AWS_USER }} /usr/share/nginx/html"
+          scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/user/share/nginx/html
+          
