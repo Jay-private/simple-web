@@ -35,5 +35,4 @@ jobs:
       - name: 5.파일서버로 복사
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo chown -R ${{ secrets.AWS_USER }}:${{ secrets.AWS_USER }} /usr/share/nginx/html"
-          scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/user/share/nginx/html
-          
+          scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/usr/share/nginx/html
