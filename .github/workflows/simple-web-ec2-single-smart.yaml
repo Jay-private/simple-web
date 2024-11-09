@@ -1,5 +1,5 @@
 ## ec2 s3 deploy12
-name: Deploy to AWS
+name: Smart Deploy to AWS
 on:
   push:
     branches: [main]
@@ -47,8 +47,7 @@ jobs:
             sleep 10
           fi
 
-      - name: 6.AWS Deploy 를 통해 배포한다
-        # id 를 지정하면 아래 step 에서 이 step 에서 생성된 변수에 접근 가능
+      - name: Start CodeDeploy deployment
         id: deploy
         run: |
           DEPLOYMENT_ID=$(aws deploy create-deployment \
@@ -59,10 +58,8 @@ jobs:
             --query 'deploymentId')
           #echo "::set-output name=deployment_id::$DEPLOYMENT_ID"
           #echo "{name}=deployment_id" >> $GITHUB_OUTPUT
-
-          # $GITHUB_OUTPUT 에다가 DEPLOYMENT_ID 를 저장하면 아래 step 에서 참조 가능
           echo "deployment_id=${DEPLOYMENT_ID}" >> $GITHUB_OUTPUT
 
-      - name: 7.deloly 완료 대기
+      - name: Wait for deployment to complete
         run: |
           aws deploy wait deployment-successful --deployment-id ${{ steps.deploy.outputs.deployment_id }}
