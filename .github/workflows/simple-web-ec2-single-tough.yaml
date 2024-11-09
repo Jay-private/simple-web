@@ -36,3 +36,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo chown -R ${{ secrets.AWS_USER }}:${{ secrets.AWS_USER }} /usr/share/nginx/html"
           scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/usr/share/nginx/html
+
+      - name: 6.Restart webserver
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo systemctl restart nginx || sudo system ctl restart httpd"
