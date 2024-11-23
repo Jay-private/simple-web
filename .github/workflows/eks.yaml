@@ -29,7 +29,6 @@ jobs:
       - name: 4.Docker Push
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/simple-web:${{ env.DOCKER_TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/simple-web:latest
 
       # 서비스 리포지토리 체크아웃
       - name: 5.서비스 리포지토리 체크아웃
