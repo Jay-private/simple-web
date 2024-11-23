@@ -46,7 +46,7 @@ jobs:
           ls -la
           # 현재 파일 내용 확인
           cat simple-deploy.yaml
-          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}\/simple-web.*|image: ${{ secrets.DOCKER_USERNAME }}\/simple-web:${{ env.DOCKER_TAG }}|g" istory-app-deploy.yaml
+          sed -i "s|image: ${{ secrets.DOCKER_USERNAME }}\/simple-web.*|image: ${{ secrets.DOCKER_USERNAME }}\/simple-web:${{ env.DOCKER_TAG }}|g" simple-deploy.yaml
           # 변경된 내용 확인
           cat simple-deploy.yaml
       
