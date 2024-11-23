@@ -29,5 +29,6 @@ jobs:
       - name: 4.Docker Push
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/simple-web:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/simple-web:latest
 
       
