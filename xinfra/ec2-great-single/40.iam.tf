@@ -1,24 +1,24 @@
- # GitHub Actions용 IAM 역할 생성
-resource "aws_iam_role" "github_actions_role" {
-  name = "GithubActionsRole"
+# GitHub Actions용 IAM 역할 생성
+# resource "aws_iam_role" "github_actions_role" {
+#   name = "GithubActionsRole"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-        }
-      }
-    ]
-  })
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Action = "sts:AssumeRole"
+#         Effect = "Allow"
+#         Principal = {
+#           AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+#         }
+#       }
+#     ]
+#   })
 
-  tags = {
-    Name = "github-actions-role"
-  }
-}
+#   tags = {
+#     Name = "github-actions-role"
+#   }
+# }
 
 # CodeDeploy를 위한 EC2 IAM 역할
 resource "aws_iam_role" "ec2_codedeploy_role" {
@@ -64,16 +64,16 @@ resource "aws_iam_role" "codedeploy_service_role" {
   }
 }
 
-# GitHub Actions 역할에 정책 연결
-resource "aws_iam_role_policy_attachment" "github_actions_s3" {
-  role       = aws_iam_role.github_actions_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
+# # GitHub Actions 역할에 정책 연결
+# resource "aws_iam_role_policy_attachment" "github_actions_s3" {
+#   role       = aws_iam_role.github_actions_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+# }
 
-resource "aws_iam_role_policy_attachment" "github_actions_codedeploy" {
-  role       = aws_iam_role.github_actions_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployFullAccess"
-}
+# resource "aws_iam_role_policy_attachment" "github_actions_codedeploy" {
+#   role       = aws_iam_role.github_actions_role.name
+#   policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployFullAccess"
+# }
 
 # EC2 인스턴스 역할에 정책 연결
 resource "aws_iam_role_policy_attachment" "ec2_codedeploy_s3" {
