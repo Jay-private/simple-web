@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy-on-aws:
+  build:
     runs-on: ubuntu-latest
     env:
       DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/simple-web
@@ -28,6 +28,6 @@ jobs:
 
       - name: 4.Docker Push
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/istory:${{ env.DOCKER_TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/simple-web:${{ env.DOCKER_TAG }}
 
       
